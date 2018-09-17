@@ -1,0 +1,62 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Simple Email Service API"
+  description: |
+    This service can send email with help of different emails proiders
+
+paths:
+  /api_docs:
+    get:
+      summary: "Retrieve information about service api"
+      operationId: getApiDocs
+
+      parameters:
+      - in: query
+        name: asset
+        required: true
+        schema:
+          type: string
+        description: ""
+
+      responses:
+        200:
+          description: "Api Documentation"
+          content:
+            application/json:
+              schema:
+                type: string
+
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          description: "If there is no docs this method will return 404 Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+              example:
+                code: 404
+                message: "No documentation with asset"
+
+components:
+  schemas:
+    ErrorSchema:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
+  responses:
+    400:
+      description: "Invalid input"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorSchema'
+          example:
+            code: 400
+            message: "Invalid params"
+
