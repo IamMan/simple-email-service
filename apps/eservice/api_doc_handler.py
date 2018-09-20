@@ -3,8 +3,8 @@ import logging
 import mimetypes
 import os
 
-from .handler import Handler
-from .helpers import LambdaEventWrapper, Response
+from apps.eservice.handler import Handler
+from apps.helpers import LambdaEventWrapper, Response
 
 
 class ApiDocHandler(Handler):

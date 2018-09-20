@@ -1,6 +1,6 @@
 import abc
 
-from .helpers import LambdaEventWrapper, Response
+from apps.helpers import LambdaEventWrapper, Response
 
 
 class Handler:

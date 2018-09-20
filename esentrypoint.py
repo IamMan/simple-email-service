@@ -1,4 +1,4 @@
-import apps.emailservice as main
+import apps.eservice.emailservice as main
 
 
 def handler(event, context):

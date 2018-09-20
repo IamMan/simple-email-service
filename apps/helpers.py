@@ -42,6 +42,24 @@ class Response(lambdarest.Response):
     def make_ok_base64(body):
         return Response.make_response(200, body, is_base64=True)
 
+    @staticmethod
+    def get_parameter_or_throw_exception(key, params):
+        value = params.get(key) or None
+        if value is None:
+            raise ExceptionWithCode(
+                401,
+                generate_missed_field_message(key)
+            )
+        return value
+
+
+def generate_unauthorized_message():
+    return "Unauthorized"
+
+
+def generate_missed_field_message(field):
+    return "Missed '{}'".format(field)
+
 
 def generate_unknown_message(type, was, valid):
     return "Unknown {} '{}', should be one of {}".format(type, was, valid)
@@ -56,6 +74,12 @@ class LambdaEventWrapper:
 
     def get_path_params(self) -> Dict:
         return self.event.get("pathParameters") or {}
+
+    def get_headers(self) -> Dict:
+        return self.event.get("headers") or {}
+
+    def get_body(self) -> Dict:
+        return self.event.get("body") or {}
 
 
 db_call_global_retry = retry(retry=retry_if_exception_type(OperationalError),
@@ -77,3 +101,6 @@ class ExceptionWithCode(Exception):
         super(ExceptionWithCode, self).__init__(text, *args)
         self.text = text
         self.code = code
+
+
+

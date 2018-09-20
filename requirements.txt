@@ -1,5 +1,7 @@
+sqlalchemy
 requests
 boto3
 pytest
 tenacity
 lambdarest
+psycopg2==2.7
