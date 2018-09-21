@@ -35,7 +35,7 @@ def swagger_doc(event, **kwargs):
 
 @lambda_handler.handle("post", path="/email/send/*")
 def email_sent(event, **kwargs):
-    return wrap_event(emails_handler.handle, event)
+    return wrap_event(emails_handler.handle_sand_email, event)
 
 
 def handler(event, context=None):

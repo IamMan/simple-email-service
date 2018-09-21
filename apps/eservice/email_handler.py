@@ -2,11 +2,10 @@ import json
 import logging
 
 from apps.eservice.daos import UsersDao, EmailsDao, Email, EmailStatus, EnumEncoder
-from apps.eservice.handler import Handler
 from apps.helpers import LambdaEventWrapper, Response, ExceptionWithCode, generate_unauthorized_message
 
 
-class EmailsHandler(Handler):
+class EmailsHandler():
     def __init__(self, users_dao: UsersDao, emails_dao: EmailsDao, emails_providers: list):
         self.users_dao = users_dao
         self.emails_dao = emails_dao
@@ -61,7 +60,7 @@ class EmailsHandler(Handler):
                     return email
         return email
 
-    def handle(self, event: LambdaEventWrapper) -> Response:
+    def handle_sand_email(self, event: LambdaEventWrapper) -> Response:
         email = self.initialize_email(event)
         email = self.save_email(email)
         email = self.send_email(email)

@@ -33,7 +33,7 @@ def test_email_sent_simple():
              "\"subject\":\"test email\",\"html\":\"Text of the email\"} "
     )
     event = LambdaEventWrapper(event)
-    response = emails_handler.handle(event)
+    response = emails_handler.handle_sand_email(event)
     code = response.status_code
     assert code is not None and code == 200
     email = json.loads(response.body)
@@ -52,7 +52,7 @@ def test_email_sent_when_one_provider_unavailable():
              "\"subject\":\"test email\",\"html\":\"Text of the email\"} "
     )
     event = LambdaEventWrapper(event)
-    response = emails_handler.handle(event)
+    response = emails_handler.handle_sand_email(event)
     code = response.status_code
     assert code is not None and code == 200
     email = json.loads(response.body)
@@ -71,7 +71,7 @@ def test_email_sent_when_all_provider_unavailable():
              "\"subject\":\"test email\",\"html\":\"Text of the email\"} "
     )
     event = LambdaEventWrapper(event)
-    response = emails_handler.handle(event)
+    response = emails_handler.handle_sand_email(event)
     code = response.status_code
     assert code is not None and code == 200
     email = json.loads(response.body)

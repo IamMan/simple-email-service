@@ -3,11 +3,10 @@ import logging
 import mimetypes
 import os
 
-from apps.eservice.handler import Handler
 from apps.helpers import LambdaEventWrapper, Response
 
 
-class ApiDocHandler(Handler):
+class ApiDocHandler():
     def handle(self, event: LambdaEventWrapper) -> Response:
         logging.info("cwd %s", os.getcwd())
         return serve_from_folder(os.getcwd() + "/api_docs", event.get_path_params().get("asset"))
