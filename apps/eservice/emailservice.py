@@ -53,7 +53,7 @@ def email_get(event, **kwargs):
     return wrap_event(emails_handler.handle_get_email, event)
 
 
-@lambda_handler.handle("get", path="/email/<int:email_id>/send")
+@lambda_handler.handle("post", path="/email/<int:email_id>/send")
 def email_send(event, **kwargs):
     return wrap_event(emails_handler.handle_send_email, event)
 

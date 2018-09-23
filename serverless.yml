@@ -51,7 +51,15 @@ functions:
         method: get
         cors: true
     - http:
-        path: /email/{email_id}
+        path: /emails
+        method: post
+        cors: true
+    - http:
+        path: /email/<int:email_id>
+        method: get
+        cors: true
+    - http:
+        path: /email/<int:email_id>/send
         method: get
         cors: true
 
