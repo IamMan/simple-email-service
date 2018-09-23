@@ -10,13 +10,17 @@ from apps.helpers import LambdaEventWrapper, ExceptionWithCode, Response
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     stream=sys.stdout)
 logger = logging.getLogger("EmailService")
+logger.setLevel(logging.INFO)
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+logger.info("EService initializing...")
 
 global_cntxt = GlobalContext.create_context()
 
 api_doc_handler = ApiDocHandler()
 emails_handler = EmailsHandler(global_cntxt.users_dao, global_cntxt.emails_dao, [])
 
+logger.info("EService initialization finished...")
 
 def wrap_event(f, e):
     try:
