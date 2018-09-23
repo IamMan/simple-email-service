@@ -1,0 +1,70 @@
+service: sls-eservice
+frameworkVersion: "=1.32.0"
+
+provider:
+  name: aws
+  runtime: python3.6
+  memorySize: 128
+  timeout: 30
+  deploymentBucket:
+    name: serverless.nikita.${self:provider.region}.deploys
+    serverSideEncryption: AES256
+  stage: ${opt:stage, 'stage'}
+  region: eu-west-1
+
+  vpc:
+    securityGroupIds:
+    - ${file(application-${self:provider.stage}.yml):sg-id}
+    subnetIds: ${file(application-${self:provider.stage}.yml):subnet-ids}
+
+  environment:
+    PASSWORD_SSM_PATH: /${self:service}/DB_PASSWORD
+    DB_URL: ${file(application-${self:provider.stage}.yml):connection-string}
+
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+    - "ssm:getParameter"
+    Resource: "arn:aws:ssm:*:*:parameter/${self:service}/*"
+
+
+package:
+  include:
+  - 'apps/**/*.py'
+  - 'sql/**/*.sql'
+  - '*.py'
+  - 'api_docs/**/*'
+  - 'rds-combined-ca-bundle.pem'
+  exclude:
+  - '*'
+  - '*/**'
+
+#  individually: true
+
+functions:
+  churn:
+    handler: esentrypoint.handler
+    events:
+
+    - http:
+        path: /api-docs/{asset}
+        method: get
+        cors: true
+    - http:
+        path: /email/{email_id}
+        method: get
+        cors: true
+
+
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    dockerFile: Dockerfile
+    vendor: ./libs
+    noDeploy:
+    - pytest
+    - boto3
+
+plugins:
+  - serverless-python-requirements
