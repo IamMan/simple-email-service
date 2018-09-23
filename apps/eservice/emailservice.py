@@ -19,6 +19,19 @@ logger.info("EService initializing...")
 
 global_cntxt = GlobalContext.create_context()
 
+
+def apply_db_migration(cntxt):
+    logger.info("Applying migration...")
+    sql = join(os.getcwd(), 'sql')
+    onlyfiles = [join(sql, f) for f in os.listdir(sql) if isfile(join(sql, f))]
+    for path in onlyfiles:
+        logger.info("Applying migration at path")
+        with open(path, 'r') as f:
+            stmt = f.read()
+            cntxt.session.execute(stmt)
+    logger.info("Migration finished")
+
+
 api_doc_handler = ApiDocHandler()
 emails_handler = EmailsHandler(global_cntxt.users_dao, global_cntxt.emails_dao, [])
 
@@ -46,4 +59,7 @@ def email_send(event, **kwargs):
 
 
 def handler(event, context=None):
-    return lambda_handler(event)
+    if event.get('type') == 'admin' and event.get('op') == 'db_migration':
+        apply_db_migration(global_cntxt)
+    else:
+        return lambda_handler(event)
