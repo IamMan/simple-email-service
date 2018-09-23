@@ -13,8 +13,8 @@ class MockUsersDao(UsersDao):
 
 class MockEmailsDao(EmailsDao):
 
-    def get_email(self, email_id) -> Email:
-        email = Email(1, "test@email", "test1@test.test, test2@test.test", "test", "test text")
+    def get_email(self, user_id, email_id) -> Email:
+        email = Email(user_id, "test@email", "test1@test.test, test2@test.test", "test", "test text")
         email.id = email_id
         email.status = EmailStatus.CREATED
         email.updated_at = mktime(time.gmtime())

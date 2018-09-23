@@ -56,7 +56,7 @@ class EmailsDao:
         pass
 
     @abc.abstractmethod
-    def get_email(self, email_id) -> Email:
+    def get_email(self, user_id, email_id) -> Email:
         pass
 
 

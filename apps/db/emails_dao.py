@@ -49,7 +49,7 @@ class SqlAlchemyEmailsDao(EmailsDao):
                      via=db_email.via,
                      message=db_email.message)
 
-    def get_email(self, email_id) -> Email:
+    def get_email(self, user_id, email_id) -> Email:
         db_email = self._session.query(Emails).get(email_id)
         return self._db_email_to_email(db_email)
 
