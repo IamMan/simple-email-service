@@ -42,15 +42,15 @@ class Response(lambdarest.Response):
     def make_ok_base64(body):
         return Response.make_response(200, body, is_base64=True)
 
-    @staticmethod
-    def get_parameter_or_throw_exception(key, params):
-        value = params.get(key) or None
-        if value is None:
-            raise ExceptionWithCode(
-                401,
-                generate_missed_field_message(key)
-            )
-        return value
+
+def get_parameter_or_throw_exception(key, params):
+    value = params.get(key) or None
+    if value is None:
+        raise ExceptionWithCode(
+            401,
+            generate_missed_field_message(key)
+        )
+    return value
 
 
 def generate_unauthorized_message():
@@ -87,6 +87,15 @@ db_call_global_retry = retry(retry=retry_if_exception_type(OperationalError),
                              stop=(stop_after_attempt(3) | stop_after_delay(20)),
                              before_sleep=before_sleep_log(logging, logging.WARN),
                              reraise=True)
+
+
+def wrap_event(f, e):
+    try:
+        return f(LambdaEventWrapper(e))
+    except ExceptionWithCode as r:
+        return Response.make_response_with_message(r.code, r.text)
+    except Exception:
+        return Response.make_response_with_message(500, "Internal Server Error")
 
 
 def safe_cast(val, to_type, default=None):

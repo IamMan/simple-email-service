@@ -2,7 +2,8 @@ import json
 import logging
 
 from apps.eservice.daos import UsersDao, EmailsDao, Email, EmailStatus, EnumEncoder
-from apps.helpers import LambdaEventWrapper, Response, ExceptionWithCode, generate_unauthorized_message
+from apps.helpers import LambdaEventWrapper, Response, ExceptionWithCode, generate_unauthorized_message, \
+    get_parameter_or_throw_exception
 
 
 class EmailsHandler():
@@ -27,13 +28,13 @@ class EmailsHandler():
             )
         return user_id
 
-    def initialize_email(self, event) -> Email:
-        user_id = self.validate_api_key(event.get_headers())
+    @staticmethod
+    def initialize_email(user_id, event) -> Email:
         email_body = json.loads(event.get_body())
-        from_email = Response.get_parameter_or_throw_exception("from_email", email_body)
-        recipients = Response.get_parameter_or_throw_exception("recipients", email_body)
-        subject = Response.get_parameter_or_throw_exception("subject", email_body)
-        html = Response.get_parameter_or_throw_exception("html", email_body)
+        from_email = get_parameter_or_throw_exception("from_email", email_body)
+        recipients = get_parameter_or_throw_exception("recipients", email_body)
+        subject = get_parameter_or_throw_exception("subject", email_body)
+        html = get_parameter_or_throw_exception("html", email_body)
 
         return Email(user_id, from_email, recipients, subject, html)
 
@@ -58,12 +59,40 @@ class EmailsHandler():
             finally:
                 if email.via == provider.name:
                     return email
-        return email
+        raise ExceptionWithCode(400, "All emails providers temporarily unavailable")
 
-    def handle_sand_email(self, event: LambdaEventWrapper) -> Response:
-        email = self.initialize_email(event)
+    def handle_create_email(self, event: LambdaEventWrapper) -> Response:
+        user_id = self.validate_api_key(event.get_headers())
+        email = self.initialize_email(user_id, event)
         email = self.save_email(email)
+
+        return Response.make_response(200, json.dumps(email.__dict__, indent=4, cls=EnumEncoder))
+
+    @staticmethod
+    def raise_email_not_found(email_id):
+        raise ExceptionWithCode(
+            404,
+            "Email with {} id not found".format(email_id)
+        )
+
+    def handle_send_email(self, event: LambdaEventWrapper) -> Response:
+        user_id = self.validate_api_key(event.get_headers())
+        email_id = get_parameter_or_throw_exception("email_id", event.get_path_params())
+
+        email = self.emails_dao.get_email(user_id, email_id)
+        if email is None:
+            EmailsHandler.raise_email_not_found(email_id)
+
         email = self.send_email(email)
+        return Response.make_response(200, json.dumps(email.__dict__, indent=4, cls=EnumEncoder))
+
+    def handle_get_email(self, event: LambdaEventWrapper) -> Response:
+        user_id = self.validate_api_key(event.get_headers())
+
+        email_id = get_parameter_or_throw_exception("email_id", event.get_path_params())
+        email = self.emails_dao.get_email(user_id, email_id)
+        if email is None:
+            EmailsHandler.raise_email_not_found(email_id)
         return Response.make_response(200, json.dumps(email.__dict__, indent=4, cls=EnumEncoder))
 
 
