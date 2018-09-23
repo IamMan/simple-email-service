@@ -20,7 +20,7 @@ module "stage_eservice_db" {
   password                  = "${data.aws_ssm_parameter.stage_eservice_db_admin_pass.value}"
   port                      = "5432"
 
-  vpc_security_group_ids    = ["${module.stage_eservice_db_security_group.this_security_group_id}"]
+  vpc_security_group_ids    = ["${module.stage_eservice_security_group.this_security_group_id}"]
 
   # disable backups to create DB faster
   backup_retention_period   = 1
@@ -46,9 +46,9 @@ module "stage_eservice_db" {
   }]
 }
 
-module "stage_eservice_db_security_group" {
+module "stage_eservice_security_group" {
   source                   = "terraform-aws-modules/security-group/aws"
-  version                  = "1.20.0"
+  version                  = "2.5.0"
   name                     = "stage-eservice-rds-sg"
   vpc_id                   = "${module.vpc.vpc_id}"
 
@@ -57,6 +57,17 @@ module "stage_eservice_db_security_group" {
     {
       rule        = "postgresql-tcp"
       cidr_blocks = "${join(",", var.allowed_cidr_blocks)}"
+    },
+    {
+      rule        = "https-443-tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  egress_with_cidr_blocks = [
+    {
+      rule        = "https-443-tcp"
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 
@@ -79,4 +90,12 @@ output "stage_eservice_db_address" {
 
 output "stage_eservice_db_name" {
   value = "${module.stage_eservice_db.this_db_instance_name}"
+}
+
+output "stage_eservice_sg" {
+  value = "${module.vpc.default_vpc_default_security_group_id}"
+}
+
+output "stage_eservice_private_subnets" {
+  value = "${module.vpc.private_subnets}"
 }

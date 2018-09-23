@@ -10,7 +10,7 @@ data "aws_region" "current" {}
 
 module "vpc" {
   source                       = "terraform-aws-modules/vpc/aws"
-  version                      = "1.30.0"
+  version                      = "1.44.0"
 
 
   enable_nat_gateway           = true
