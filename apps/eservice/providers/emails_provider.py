@@ -11,5 +11,5 @@ class EmailsProvider:
         pass
 
     @abc.abstractmethod
-    def send(self, email: Email) -> Email:
+    def send(self, email: Email) -> bool:
         pass

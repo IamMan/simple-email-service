@@ -77,7 +77,7 @@ def test_sqlalchemy_dao_update_status_after(context):
         email = emails_dao.save_email(email)
 
         updated_at = email.created_at + 100500
-        emails_dao.update_status_if_timestamp_after(email.id, EmailStatus.ACCEPTED, updated_at)
+        emails_dao.update_status_and_message_if_timestamp_after(email.id, EmailStatus.ACCEPTED, updated_at, "updated")
 
         emails_got = emails_dao.get_email(email.id)
         assert emails_got.id is not None and email.id == 1

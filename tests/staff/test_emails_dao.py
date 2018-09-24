@@ -13,6 +13,9 @@ class MockUsersDao(UsersDao):
 
 class MockEmailsDao(EmailsDao):
 
+    def update_via(self, email_id, via):
+        pass
+
     def get_email(self, user_id, email_id) -> Email:
         email = Email(user_id, "test@email", "test1@test.test, test2@test.test", "test", "test text")
         email.id = email_id
@@ -24,7 +27,7 @@ class MockEmailsDao(EmailsDao):
     def __init__(self) -> None:
         self._current_email_id = 1
 
-    def update_status_if_timestamp_after(self, email_id, status, event_timestamp):
+    def update_status_and_message_if_timestamp_after(self, email_id, status, event_timestamp, message):
         pass
 
     def save_email(self, email) -> Email:

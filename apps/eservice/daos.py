@@ -48,7 +48,11 @@ class Email(object):
 class EmailsDao:
 
     @abc.abstractmethod
-    def update_status_if_timestamp_after(self, email_id, status, event_timestamp):
+    def update_status_and_message_if_timestamp_after(self, email_id, status, event_timestamp, message):
+        pass
+
+    @abc.abstractmethod
+    def update_via(self, email_id, via):
         pass
 
     @abc.abstractmethod
