@@ -17,7 +17,7 @@ paths:
         required: true
         schema:
           type: string
-        description: ""
+        description: "AssetId"
 
       responses:
         200:
@@ -38,6 +38,100 @@ paths:
               example:
                 code: 404
                 message: "No documentation with asset"
+  /emails:
+    post:
+      summary: "Creates new email in database"
+      operationId: createEmail
+
+      parameters:
+      - in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/components/schemas/EmailSchema'
+
+      responses:
+        200:
+          description: "Created email"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailSchema'
+
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/400'
+
+    /email/{email_id}:
+      get:
+        summary: "Retrieve email from database"
+        operationId: getEmail
+
+        parameters:
+        - in: path
+          name: email_id
+          required: true
+          type: integer
+
+        responses:
+          200:
+            description: "Retrieved email"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/EmailSchema'
+          400:
+            $ref: '#/components/responses/400'
+          401:
+            $ref: '#/components/responses/401'
+          404:
+            $ref: '#/components/responses/401'
+
+    /email/{email_id}/send:
+      post:
+        summary: "Send email to email provider"
+        operationId: sendEmail
+
+        parameters:
+        - in: path
+          name: email_id
+          required: true
+          type: integer
+
+        responses:
+          200:
+            description: "Email successfully sent"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/EmailSchema'
+          400:
+            $ref: '#/components/responses/400'
+          401:
+            $ref: '#/components/responses/401'
+          404:
+            $ref: '#/components/responses/401'
+
+    /mailgun/receive:
+      post:
+        summary: "Receive webhook from Mailgun provider"
+          operationId: recieveMailgunWebhook
+        responses:
+          200:
+            description: Webhook successfully processed
+          406:
+            description: Webhook rejected
+
+    /sparkpost/receive:
+      post:
+        summary: "Receive webhook from Sparkpost provider"
+          operationId: recieveSparkpostWebhook
+        responses:
+          200:
+            description: Webhook successfully processed
+          406:
+            description: Webhook rejected
 
 components:
   schemas:
@@ -48,6 +142,9 @@ components:
           type: integer
         message:
           type: string
+    EmailSchema:
+      type: object
+      properties:
 
   responses:
     400:
@@ -59,4 +156,22 @@ components:
           example:
             code: 400
             message: "Invalid params"
+    401:
+      description: "Unauthorized"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorSchema'
+          example:
+            code: 401
+            message: "Unauthorized"
+    404:
+      description: "Resource not found"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorSchema'
+          example:
+            code: 404
+            message: "Not found"
 

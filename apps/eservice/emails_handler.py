@@ -21,7 +21,7 @@ class EmailsHandler:
         user_id = self.users_dao.get_user_id_by_access_key(api_key)
         if user_id is None:
             raise ExceptionWithCode(401, generate_unauthorized_message())
-        return user_id
+        return user_id[0]
 
     @staticmethod
     def initialize_email(user_id, event) -> Email:
@@ -50,15 +50,18 @@ class EmailsHandler:
         assert email.id is not None
         assert email.status == EmailStatus.CREATED
 
+        timestamp = int(time.mktime(time.gmtime()))
         for provider in self.emails_providers:
             try:
                 is_accepted = provider.send(email)
                 if is_accepted:
                     self.emails_dao.update_via(email.id, provider.name)
-                    self.emails_dao.update_status_and_message_if_timestamp_after(email.id, EmailStatus.ACCEPTED, int(
-                        time.mktime(time.gmtime())), None)
+
+                    self.emails_dao.update_status_and_message_if_timestamp_after(email.id, EmailStatus.ACCEPTED,
+                                                                                 timestamp, None)
                     email.via = provider.name
                     email.status = EmailStatus.ACCEPTED
+                    email.updated_at = timestamp
                     return email
             except Exception:
                 self._logger.exception("Provider {} raise exception".format(provider.name))

@@ -66,7 +66,7 @@ def test_sqlalchemy_dao_get(context):
         emails_dao = context.emails_dao
         email = Email(1, "test@test.test", "test3@test.test,test2@test.test", "test", "Test text")
         email_saved = emails_dao.save_email(email)
-        emails_got = emails_dao.get_email(email_saved.id)
+        emails_got = emails_dao.get_email(1, email_saved.id)
         assert email_saved == emails_got
 
 
@@ -79,7 +79,7 @@ def test_sqlalchemy_dao_update_status_after(context):
         updated_at = email.created_at + 100500
         emails_dao.update_status_and_message_if_timestamp_after(email.id, EmailStatus.ACCEPTED, updated_at, "updated")
 
-        emails_got = emails_dao.get_email(email.id)
+        emails_got = emails_dao.get_email(1, email.id)
         assert emails_got.id is not None and email.id == 1
         assert emails_got.status is not None and emails_got.status == EmailStatus.ACCEPTED
         assert emails_got.created_at == email.created_at

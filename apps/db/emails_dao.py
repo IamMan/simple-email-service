@@ -85,5 +85,5 @@ class SqlAlchemyEmailsDao(EmailsDao):
     def update_status_and_message_if_timestamp_after(self, email_id, status, event_timestamp, message):
         status_code = status.value
         self._session.query(Emails). \
-            filter(and_(Emails.id == email_id, Emails.updated_at < event_timestamp)). \
+            filter(and_(Emails.id == email_id, Emails.updated_at <= event_timestamp)). \
             update({"status": status_code, "message": message, "updated_at": event_timestamp})

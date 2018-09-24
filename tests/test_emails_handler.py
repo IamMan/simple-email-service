@@ -1,7 +1,8 @@
 import json
 
-from apps.eservice.daos import EmailStatus
+from apps.eservice.daos import EmailStatus, Email
 from apps.eservice.emails_handler import EmailsHandler
+from apps.eservice.providers.sparkpost_emails_provider import SparkpostEmailsProvider
 from apps.helpers import LambdaEventWrapper, wrap_event
 from staff.test_emails_dao import MockUsersDao, MockEmailsDao
 from staff.test_emails_providers import SimpleMockEmailsProvider, BadMockEmailsProvider
@@ -74,4 +75,12 @@ def test_email_sent_when_all_provider_unavailable():
 
     code = response.status_code
     assert code is not None and code == 400
+
+
+def test_spark_post():
+    sp = SparkpostEmailsProvider('test@sparkpostbox.com', True)
+    email = Email(id=1234567890, user_id=1, from_email='User', recipients='iammmann@gmail.com',
+                  subject='Email with test message', html='Test message')
+    sp.send(email)
+
 

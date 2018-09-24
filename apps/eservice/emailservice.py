@@ -46,7 +46,7 @@ sparkpsot_receiver = create_sparkpost_receiver(global_cntxt.emails_dao)
 logger.info("EService initialization finished...")
 
 
-@lambda_handler.handle("get", path="/api-doc/*")
+@lambda_handler.handle("get", path="/api-docs/*")
 def swagger_doc(event, **kwargs):
     return wrap_event(api_doc_handler.handle, event)
 
