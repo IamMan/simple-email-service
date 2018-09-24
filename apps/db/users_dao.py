@@ -10,7 +10,7 @@ class Users(Base):
     id = Column(Integer, primary_key=True)
     login = Column(String)
     passwordHash = Column(String)
-    apiKey = Column(String)
+    apikey = Column(String)
 
 
 class SqlAlchemyUsersDao(UsersDao):
@@ -19,4 +19,4 @@ class SqlAlchemyUsersDao(UsersDao):
 
     @db_call_global_retry
     def get_user_id_by_access_key(self, api_key):
-        return self._session.query(Users.id).filter(Users.apiKey == api_key).first()
+        return self._session.query(Users.id).filter(Users.apikey == api_key).first()

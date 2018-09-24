@@ -8,7 +8,7 @@ from apps.eservice.emails_handler import Email, EmailStatus
 
 class MockUsersDao(UsersDao):
     def get_user_id_by_access_key(self, api_key):
-        return 1
+        return [1]
 
 
 class MockEmailsDao(EmailsDao):
