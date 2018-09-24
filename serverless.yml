@@ -23,6 +23,9 @@ provider:
     MAILGUN_API_KEY: ${file(application-${self:provider.stage}.yml):mailgun-api-key}
     MAILGUN_API_URL: ${file(application-${self:provider.stage}.yml):mailgun-api-url}
     MAILGUN_API_FROM: ${file(application-${self:provider.stage}.yml):mailgun-api-from}
+    SPARKPOST_API_KEY: ${file(application-${self:provider.stage}.yml):sparkpost-api-key}
+    SPARKPOST_API_FROM: ${file(application-${self:provider.stage}.yml):sparkpost-api-from}
+    SPARKPOST_API_IS_SANDBOX: ${file(application-${self:provider.stage}.yml):sparkpost-api-is-sandbox}
 
   iamRoleStatements:
   - Effect: "Allow"
@@ -67,6 +70,10 @@ functions:
         cors: true
     - http:
         path: /mailgun/receive
+        method: post
+        cors: true
+    - http:
+        path: /sparkpost/receive
         method: post
         cors: true
 

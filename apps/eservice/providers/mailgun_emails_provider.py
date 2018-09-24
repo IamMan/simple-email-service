@@ -164,7 +164,6 @@ class MailgunReceiverHandler:
                 status = EmailStatus.REJECTED
                 message = delivery_status.get('description')
 
-        self.logger.info("Ready to update status with {}".format(timestamp))
         self.emails_dao.update_status_and_message_if_timestamp_after(email_id, status, timestamp, message)
 
 

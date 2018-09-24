@@ -5,3 +5,4 @@ pytest
 tenacity
 lambdarest
 psycopg2==2.7
+sparkpost

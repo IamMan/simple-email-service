@@ -9,13 +9,14 @@ from apps.db.context import GlobalContext
 from apps.eservice.emails_handler import EmailsHandler
 from apps.eservice.api_doc_handler import ApiDocHandler
 from apps.eservice.providers.mailgun_emails_provider import create_mailgun_provider, create_mailgun_receive_handler
+from apps.eservice.providers.sparkpost_emails_provider import create_sparkpost_receiver
 from apps.helpers import wrap_event
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     stream=sys.stdout)
 logger = logging.getLogger("EmailService")
-logger.setLevel(logging.WARN)
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+logger.setLevel(logging.INFO)
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
 
 logger.info("EService initializing...")
 
@@ -40,6 +41,7 @@ emails_handler = EmailsHandler(global_cntxt.users_dao, global_cntxt.emails_dao, 
     create_mailgun_provider()])
 
 mailgun_receiver_handler = create_mailgun_receive_handler(global_cntxt.emails_dao)
+sparkpsot_receiver = create_sparkpost_receiver(global_cntxt.emails_dao)
 
 logger.info("EService initialization finished...")
 
@@ -67,6 +69,11 @@ def email_send(event):
 @lambda_handler.handle("post", path="/mailgun/receive")
 def mailgun_receive(event):
     return wrap_event(mailgun_receiver_handler.handle, event)
+
+
+@lambda_handler.handle("post", path="/sparkpost/receive")
+def sparkpsot_receive(event):
+    return wrap_event(sparkpsot_receiver.handle, event)
 
 
 def handler(event, context=None):
