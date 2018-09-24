@@ -8,7 +8,7 @@ from lambdarest import lambda_handler
 from apps.db.context import GlobalContext
 from apps.eservice.emails_handler import EmailsHandler
 from apps.eservice.api_doc_handler import ApiDocHandler
-from apps.eservice.email_handler import EmailsHandler
+from apps.eservice.providers.mailgun_emails_provider import create_mailgun_provider, create_mailgun_receive_handler
 from apps.helpers import wrap_event
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -36,7 +36,10 @@ def apply_db_migration(cntxt):
 
 
 api_doc_handler = ApiDocHandler()
-emails_handler = EmailsHandler(global_cntxt.users_dao, global_cntxt.emails_dao, [])
+emails_handler = EmailsHandler(global_cntxt.users_dao, global_cntxt.emails_dao, [
+    create_mailgun_provider()])
+
+mailgun_receiver_handler = create_mailgun_receive_handler(global_cntxt.emails_dao)
 
 logger.info("EService initialization finished...")
 
@@ -59,6 +62,11 @@ def email_get(event):
 @lambda_handler.handle("post", path="/email/{email_id}/send")
 def email_send(event):
     return wrap_event(emails_handler.handle_send_email, event)
+
+
+@lambda_handler.handle("post", path="/mailgun/receive")
+def mailgun_receive(event):
+    return wrap_event(mailgun_receiver_handler.handle, event)
 
 
 def handler(event, context=None):
