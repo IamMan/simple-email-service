@@ -14,7 +14,7 @@ from apps.helpers import wrap_event
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     stream=sys.stdout)
 logger = logging.getLogger("EmailService")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARN)
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 logger.info("EService initializing...")
@@ -29,8 +29,9 @@ def apply_db_migration(cntxt):
     for path in onlyfiles:
         logger.info("Applying migration at path")
         with open(path, 'r') as f:
-            stmt = f.read()
-            cntxt.session.execute(stmt)
+            script = f.read()
+            for stmt in script.split(';'):
+                cntxt.session.execute(stmt)
     logger.info("Migration finished")
 
 
