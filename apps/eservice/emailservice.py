@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from os.path import isfile, join
@@ -49,13 +50,13 @@ def email_sent(event, **kwargs):
     return wrap_event(emails_handler.handle_create_email, event)
 
 
-@lambda_handler.handle("get", path="/email/<int:email_id>")
-def email_get(event, **kwargs):
+@lambda_handler.handle("get", path="/email/{email_id}")
+def email_get(event):
     return wrap_event(emails_handler.handle_get_email, event)
 
 
-@lambda_handler.handle("post", path="/email/<int:email_id>/send")
-def email_send(event, **kwargs):
+@lambda_handler.handle("post", path="/email/{email_id}/send")
+def email_send(event):
     return wrap_event(emails_handler.handle_send_email, event)
 
 
@@ -63,4 +64,7 @@ def handler(event, context=None):
     if event.get('type') == 'admin' and event.get('op') == 'db_migration':
         apply_db_migration(global_cntxt)
     else:
-        return lambda_handler(event)
+        logger.info(json.dumps(event, indent=4))
+        response = lambda_handler(event)
+        logger.info("{} {}".format(event.get("path"), response.get("statusCode")))
+        return response

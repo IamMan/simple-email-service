@@ -20,6 +20,9 @@ provider:
   environment:
     PASSWORD_SSM_PATH: /${self:service}/DB_PASSWORD
     DB_URL: ${file(application-${self:provider.stage}.yml):connection-string}
+    MAILGUN_API_KEY: ${file(application-${self:provider.stage}.yml):mailgun-api-key}
+    MAILGUN_API_URL: ${file(application-${self:provider.stage}.yml):mailgun-api-url}
+    MAILGUN_API_FROM: ${file(application-${self:provider.stage}.yml):mailgun-api-from}
 
   iamRoleStatements:
   - Effect: "Allow"
@@ -55,12 +58,16 @@ functions:
         method: post
         cors: true
     - http:
-        path: /email/<int:email_id>
+        path: /email/{email_id}
         method: get
         cors: true
     - http:
-        path: /email/<int:email_id>/send
-        method: get
+        path: /email/{email_id}/send
+        method: post
+        cors: true
+    - http:
+        path: /mailgun/receive
+        method: post
         cors: true
 
 
