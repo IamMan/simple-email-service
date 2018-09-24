@@ -4,7 +4,7 @@ from time import mktime
 from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger, SmallInteger, and_
 
 from apps.eservice.daos import EmailsDao
-from apps.eservice.email_handler import EmailStatus, Email
+from apps.eservice.emails_handler import EmailStatus, Email
 from apps.helpers import db_call_global_retry
 from .model import Base
 

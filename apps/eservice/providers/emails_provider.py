@@ -1,6 +1,6 @@
 import abc
 
-from apps.eservice.email_handler import Email
+from apps.eservice.emails_handler import Email
 
 
 class EmailsProvider:

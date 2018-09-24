@@ -3,7 +3,7 @@ from time import mktime
 
 
 from apps.eservice.daos import UsersDao, EmailsDao
-from apps.eservice.email_handler import Email, EmailStatus
+from apps.eservice.emails_handler import Email, EmailStatus
 
 
 class MockUsersDao(UsersDao):

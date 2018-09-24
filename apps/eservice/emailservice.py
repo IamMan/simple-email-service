@@ -5,6 +5,7 @@ import sys
 
 from lambdarest import lambda_handler
 from apps.db.context import GlobalContext
+from apps.eservice.emails_handler import EmailsHandler
 from apps.eservice.api_doc_handler import ApiDocHandler
 from apps.eservice.email_handler import EmailsHandler
 from apps.helpers import wrap_event

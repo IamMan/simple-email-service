@@ -1,8 +1,4 @@
-import time
-from time import mktime
-
-from apps.eservice.daos import EmailStatus
-from apps.eservice.email_handler import Email
+from apps.eservice.emails_handler import Email
 from apps.eservice.providers.emails_provider import EmailsProvider
 from apps.helpers import ExceptionWithCode
 

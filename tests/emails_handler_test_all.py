@@ -1,7 +1,7 @@
 import json
 
 from apps.eservice.daos import EmailStatus
-from apps.eservice.email_handler import EmailsHandler
+from apps.eservice.emails_handler import EmailsHandler
 from apps.helpers import LambdaEventWrapper, wrap_event
 from staff.test_emails_dao import MockUsersDao, MockEmailsDao
 from staff.test_emails_providers import SimpleMockEmailsProvider, BadMockEmailsProvider
